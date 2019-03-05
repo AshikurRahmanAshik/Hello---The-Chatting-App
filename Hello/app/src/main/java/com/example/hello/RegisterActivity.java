@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity
 {
@@ -24,6 +26,8 @@ public class RegisterActivity extends AppCompatActivity
     private TextView AlreadyHaveAccountLink;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference RootRef;
+
     private ProgressDialog loadingBar;
 
 
@@ -34,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
+        RootRef = FirebaseDatabase.getInstance().getReference();
 
         Initializefields();
 
@@ -80,7 +85,10 @@ public class RegisterActivity extends AppCompatActivity
                 {
                     if(task.isSuccessful())
                     {
-                        sendUserToLoginActivity();
+                        String currentUserId = mAuth.getCurrentUser().getUid();
+                        RootRef.child("Users").child(currentUserId).setValue("");
+
+                        sendUserToMainActivity();
                         Toast.makeText(RegisterActivity.this, "Account created succesfully!", Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
                     }
@@ -108,5 +116,13 @@ public class RegisterActivity extends AppCompatActivity
     {
         Intent loginIntend = new Intent(RegisterActivity.this, LoginActivity.class);
         startActivity(loginIntend);
+    }
+
+    private void sendUserToMainActivity()
+    {
+        Intent mainIntend = new Intent(RegisterActivity.this, MainActivity.class);
+        mainIntend.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntend);
+        finish();
     }
 }
