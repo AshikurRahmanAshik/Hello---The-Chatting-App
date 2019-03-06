@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -144,17 +146,34 @@ public class MainActivity extends AppCompatActivity
                 }
                 else
                 {
-
+                    CreateNewGroup(groupName);
                 }
             }
         });
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                dialogInterface.cancel();
             }
         });
+        builder.show();
+    }
+
+    private void CreateNewGroup(final String groupName)
+    {
+        RootRef.child("Groups").child(groupName).setValue("")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task)
+                    {
+                        if(task.isSuccessful())
+                        {
+                            Toast.makeText(MainActivity.this, groupName+" created successfully..", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void sendUserToLoginActivity()
