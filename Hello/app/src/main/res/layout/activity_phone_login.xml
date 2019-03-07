@@ -16,7 +16,7 @@
         android:layout_marginTop="180dp"
         android:background="@drawable/inputs"
         android:padding="8dp"
-        android:hint="White Phone Number"
+        android:hint="White Phone Number with contry code"
         android:textAllCaps="false"
         android:textSize="15sp"
         android:drawableStart="@drawable/phone"
