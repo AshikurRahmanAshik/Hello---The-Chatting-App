@@ -133,7 +133,7 @@ public class PhoneLoginActivity extends AppCompatActivity
                 mResendToken = token;
 
                 loadingBar.dismiss();
-                
+
                 Toast.makeText(PhoneLoginActivity.this, "Code sent!", Toast.LENGTH_SHORT).show();
                 SendVerificationCodeButton.setVisibility(View.INVISIBLE);
                 InputPhoneNumber.setVisibility(View.INVISIBLE);

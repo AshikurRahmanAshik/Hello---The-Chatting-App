@@ -1,7 +1,9 @@
 package com.example.hello;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,6 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 
@@ -32,6 +36,9 @@ public class SettingsActivity extends AppCompatActivity
     private String currentUserID;
     private FirebaseAuth mAuth;
     private DatabaseReference RootRef;
+
+    private static final int GalleryPick = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,6 +62,16 @@ public class SettingsActivity extends AppCompatActivity
         });
 
         RetrieveUserInfo();
+
+        UserProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, GalleryPick);
+            }
+        });
     }
 
     private void InitializedFields()
@@ -63,6 +80,27 @@ public class SettingsActivity extends AppCompatActivity
         userName = (EditText) findViewById(R.id.set_user_name);
         userStatus = (EditText) findViewById(R.id.set_profile_status);
         UserProfileImage = (CircleImageView) findViewById(R.id.set_profile_image);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==GalleryPick && resultCode==RESULT_OK && data!=null)
+        {
+            Uri ImageUri = data.getData();
+
+            // start picker to get image for cropping and then use the image in cropping activity
+            CropImage.activity(ImageUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1,1)
+                    .start(this);
+
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+        }
     }
 
     private void UpdateSettings()
